@@ -2,6 +2,8 @@
  * RFPowerMonitor.h
  * 
  * Class to handle making RF power (signal strength) measurements from an LT5538 chip.
+ * Also handles sending the measurements over the serial connection with a specifc binary protocol.
+ * Means that this keeps track of the current azimuth and elevation of the antenna.
  * 
  * author      Adrien Perkins <adrienp@stanford.edu>
  * copyright  Stanford University 2017
@@ -36,13 +38,11 @@ public:
 
 	void enable();
 
+	void disable();
+
 	float makeMeasurement();
 
-	// TODO: add the following functions for allowing this monitor to run continuously
-	// 	- sendData()
-	// 	- calculateChecksum()
-	// 	- run()
-
+	//void run();
 
 private:
 
@@ -59,6 +59,15 @@ private:
 	const uint8_t _pinRead;
 
 	uint8_t _measurementRate;
+
+	/*
+	float _azimuth;
+	float _elevation;
+
+	void sendData();
+
+	void calculateChecksum();
+	*/
 
 
 };

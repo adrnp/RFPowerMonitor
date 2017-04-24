@@ -25,6 +25,10 @@ void RFPowerMonitor::enable() {
 	digitalWrite(_pinEnable, HIGH);
 }
 
+void RFPowerMonitor::disable() {
+	digitalWrite(_pinEnable, LOW);
+}
+
 float RFPowerMonitor::makeMeasurement() {
 
 	// read in the value from the sensor
