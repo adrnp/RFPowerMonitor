@@ -7,6 +7,10 @@
 
 #include "RFPowerMonitor.h"
 
+// populate the arrays with the slope and intercept data
+const float RFPowerMonitor::SLOPE[] =     {19.9,   19.6,  19.0,  18.578, 17.7,  17.6,  18.0};
+const float RFPowerMonitor::INTERCEPT[] = {-87.5, -87.3, -88.8, -87.054,  -89, -87.5, -81.4};
+
 
 RFPowerMonitor::RFPowerMonitor(uint8_t frequency, uint8_t pinEnable, uint8_t pinRead) : 
 _frequency(frequency),

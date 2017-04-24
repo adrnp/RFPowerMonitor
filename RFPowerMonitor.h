@@ -50,11 +50,12 @@ public:
 
 private:
 
-	static constexpr float SLOPE[] =     {19.9,   19.6,  19.0,  18.578, 17.7,  17.6,  18.0};
-	static constexpr float INTERCEPT[] = {-87.5, -87.3, -88.8, -87.054,  -89, -87.5, -81.4};
+	// NOTE: these are populated in the .cpp file
+	static const float SLOPE[7]; // =     {19.9,   19.6,  19.0,  18.578, 17.7,  17.6,  18.0};
+	static const float INTERCEPT[7]; // = {-87.5, -87.3, -88.8, -87.054,  -89, -87.5, -81.4};
 
-	static constexpr byte SYNC_1 = 0xA0;
-	static constexpr byte SYNC_2 = 0xB1;
+	static const byte SYNC_1 = 0xA0;
+	static const byte SYNC_2 = 0xB1;
 
 	const uint8_t _frequency;
 
