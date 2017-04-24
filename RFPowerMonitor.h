@@ -36,19 +36,25 @@ public:
 
 	void setMeasurementRate(uint8_t rate) { _measurementRate = rate; };
 
+	void setAzimuth(float azimuth) { _azimuth = azimuth; };
+
+	void setElevation(float elevation) { _elevation = elevation; };
+
 	void enable();
 
 	void disable();
 
 	float makeMeasurement();
 
-	//void run();
+	void run();
 
 private:
 
 	static constexpr float SLOPE[] =     {19.9,   19.6,  19.0,  18.578, 17.7,  17.6,  18.0};
 	static constexpr float INTERCEPT[] = {-87.5, -87.3, -88.8, -87.054,  -89, -87.5, -81.4};
 
+	static constexpr byte SYNC_1 = 0xA0;
+	static constexpr byte SYNC_2 = 0xB1;
 
 	const uint8_t _frequency;
 
@@ -59,17 +65,39 @@ private:
 	const uint8_t _pinRead;
 
 	uint8_t _measurementRate;
+	float _timeout;
 
-	/*
+	unsigned long _lastMeasurementTime;
+	float _signalStrength;
 	float _azimuth;
 	float _elevation;
 
-	void sendData();
 
-	void calculateChecksum();
+	// stuff needed for the sending of the binary messages
+	struct __attribute__((__packed__)) MeasurementMessage {
+		unsigned long timestamp;
+		float signalStrength;
+		float azimuth;
+		float elevation;
+	};
+
+	/*
+	union __attribute__((__packed__)) MessageBuffer {
+		MeasurementMessage message;
+		uint8_t buf[];
+	};
 	*/
 
+	// TODO: maybe add this later, for now ignore taking care of checksums
+	/*
+	struct __attribute__((__packed__)) Checksum {
+		uint8_t b;
+		uint8_t a;
+	};
+	*/
 
+	void sendData();
+	
 };
 
 #endif /* RFPowerMonitor_h */
