@@ -22,7 +22,8 @@ _measurementRate(10),
 _lastMeasurementTime(0),
 _signalStrength(0),
 _azimuth(-1),
-_elevation(-1)
+_elevation(-1),
+_measurementCount(0)
 {
 	// given the measurement rate (in Hz) calculate the timeout to wait between measurements
 	_timeout = 1.0/_measurementRate * 1000.0;
@@ -47,6 +48,7 @@ float RFPowerMonitor::makeMeasurement() {
 
 	// get the timestamp for this measurement
 	_lastMeasurementTime = millis();
+	_measurementCount++;
 
 	// read in the value from the sensor
 	int sensorValue = analogRead(_pinRead);

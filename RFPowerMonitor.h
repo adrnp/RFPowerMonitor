@@ -40,6 +40,10 @@ public:
 
 	void setElevation(float elevation) { _elevation = elevation; };
 
+	void resetMeasurementCount() { _measurementCount = 0; };
+
+	int getMeasurementCount() { return _measurementCount; };
+
 	void enable();
 
 	void disable();
@@ -72,6 +76,8 @@ private:
 	float _signalStrength;
 	float _azimuth;
 	float _elevation;
+
+	int _measurementCount;
 
 
 	// stuff needed for the sending of the binary messages
