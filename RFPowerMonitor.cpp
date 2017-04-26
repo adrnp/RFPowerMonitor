@@ -31,8 +31,9 @@ _measurementCount(0)
 	// set up the pins
 	pinMode(_pinEnable, OUTPUT);
 	digitalWrite(_pinEnable, LOW);
+}
 
-	// start the serial connection
+void RFPowerMonitor::setup() {
 	Serial.begin(115200);
 }
 

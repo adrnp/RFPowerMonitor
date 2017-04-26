@@ -44,6 +44,8 @@ public:
 
 	int getMeasurementCount() { return _measurementCount; };
 
+	void setup();
+
 	void enable();
 
 	void disable();
