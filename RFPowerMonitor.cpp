@@ -33,6 +33,7 @@ _measurementCount(0)
 	digitalWrite(_pinEnable, LOW);
 }
 
+
 void RFPowerMonitor::setup() {
 	Serial.begin(115200);
 }
