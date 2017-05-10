@@ -36,10 +36,6 @@ public:
 
 	void setMeasurementRate(uint8_t rate) { _measurementRate = rate; };
 
-	void setAzimuth(float azimuth) { _azimuth = azimuth; };
-
-	void setElevation(float elevation) { _elevation = elevation; };
-
 	void resetMeasurementCount() { _measurementCount = 0; };
 
 	int getMeasurementCount() { return _measurementCount; };
@@ -76,36 +72,17 @@ private:
 
 	unsigned long _lastMeasurementTime;
 	float _signalStrength;
-	float _azimuth;
-	float _elevation;
 
 	int _measurementCount;
 
 
 	// stuff needed for the sending of the binary messages
-	struct __attribute__((__packed__)) MeasurementMessage {
+	struct __attribute__((__packed__)) SignalStrengthMessage {
 		unsigned long timestamp;
 		float signalStrength;
-		float azimuth;
-		float elevation;
 	};
 
-	/*
-	union __attribute__((__packed__)) MessageBuffer {
-		MeasurementMessage message;
-		uint8_t buf[];
-	};
-	*/
-
-	// TODO: maybe add this later, for now ignore taking care of checksums
-	/*
-	struct __attribute__((__packed__)) Checksum {
-		uint8_t b;
-		uint8_t a;
-	};
-	*/
-
-	void sendData();
+	void sendSignalStrength();
 	
 };
 

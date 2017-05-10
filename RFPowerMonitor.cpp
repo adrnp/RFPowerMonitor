@@ -21,8 +21,6 @@ _pinRead(pinRead),
 _measurementRate(10),
 _lastMeasurementTime(0),
 _signalStrength(0),
-_azimuth(-1),
-_elevation(-1),
 _measurementCount(0)
 {
 	// given the measurement rate (in Hz) calculate the timeout to wait between measurements
@@ -69,11 +67,10 @@ void RFPowerMonitor::run() {
 	}
 
 	// make the measurement now
-	// NOTE: this updates _lastMeasurementTime
 	makeMeasurement();
 
 	// send the measurement along with the azimuth and elevation for this measurement
-	sendData();
+	sendSignalStrength();
 
 	return;
 }
@@ -81,14 +78,12 @@ void RFPowerMonitor::run() {
 
 /* private functions */
 
-void RFPowerMonitor::sendData() {
+void RFPowerMonitor::sendSignalStrength() {
 
 	// pack the message
-	MeasurementMessage msg;
+	SignalStrengthMessage msg;
 	msg.timestamp = _lastMeasurementTime;
 	msg.signalStrength = _signalStrength;
-	msg.azimuth = _azimuth;
-	msg.elevation = _elevation;
 
 
 	// send the data over the serial port
