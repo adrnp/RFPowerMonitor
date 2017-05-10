@@ -12,8 +12,16 @@ RFPowerMonitor	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
+setMeasurementRate	KEYWORD2
+setAzimuth	KEYWORD2
+setElevation	KEYWORD2
+resetMeasurementCount	KEYWORD2
+getMeasurementCount	KEYWORD2
+setup	KEYWORD2
 enable	KEYWORD2
+disable	KEYWORD2
 makeMeasurement	KEYWORD2
+run	KEYWORD2
 
 ######################################
 # Constants (LITERAL1)
