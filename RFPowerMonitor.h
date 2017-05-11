@@ -20,18 +20,18 @@ class RFPowerMonitor {
 public:
 
 	// for now limiting the frequency to only the options that have known data
-	enum Frequency : uint8_t {
-		F_40 = 0,
-		F_450,
-		F_880,
-		F_1575,
-		F_2140,
-		F_2700,
-		F_3600
+	enum class Frequency : uint8_t {
+		F_40_MHz = 0,
+		F_450_MHz,
+		F_880_MHz,
+		F_1575_MHz,
+		F_2140_MHz,
+		F_2700_MHz,
+		F_3600_MHz
 	};
 
 
-	RFPowerMonitor(uint8_t frequency, uint8_t pinEnable, uint8_t pinRead);
+	RFPowerMonitor(Frequency frequency, uint8_t pinEnable, uint8_t pinRead);
 
 
 	void setMeasurementRate(uint8_t rate) { _measurementRate = rate; };
@@ -59,7 +59,7 @@ private:
 	static const byte SYNC_1 = 0xA0;
 	static const byte SYNC_2 = 0xB1;
 
-	const uint8_t _frequency;
+	const Frequency _frequency;
 
 	const float _slope;
 	const float _b;

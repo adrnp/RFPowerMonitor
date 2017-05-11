@@ -7,6 +7,7 @@
 #######################################
 
 RFPowerMonitor	KEYWORD1
+Frequency	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -26,3 +27,11 @@ run	KEYWORD2
 ######################################
 # Constants (LITERAL1)
 #######################################
+
+F_40_MHz	LITERAL1
+F_450_MHz	LITERAL1
+F_880_MHz	LITERAL1
+F_1575_MHz	LITERAL1
+F_2140_MHz	LITERAL1
+F_2700_MHz	LITERAL1
+F_3600_MHz	LITERAL1
