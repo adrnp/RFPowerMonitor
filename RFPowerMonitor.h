@@ -31,6 +31,10 @@ public:
 	};
 
 
+	/* constructor for reading the power monitor input over serial (connected to difference device) */
+	RFPowerMonitor(Frequency frequency);
+
+	/* constructor for directly using the RF power monitor */
 	RFPowerMonitor(Frequency frequency, uint8_t pinEnable, uint8_t pinRead);
 
 
@@ -49,6 +53,9 @@ public:
 	float makeMeasurement();
 
 	void run();
+
+	/* function to call to be able to continually parse the incoming serial data */
+	int readRawMeasurement();
 
 private:
 

@@ -51,11 +51,23 @@ float RFPowerMonitor::makeMeasurement() {
 	_measurementCount++;
 
 	// read in the value from the sensor
-	int sensorValue = analogRead(_pinRead);
-	float voltage = sensorValue * (5.0/1023.0) * 1000.0; // mV
+	//int sensorValue = analogRead(_pinRead);
+	//float voltage = sensorValue * (5.0/1023.0) * 1000.0; // mV
 	
+	// NOTE: other board reads based on 3.3V not 5V
+	// TODO: make sure this isn't a problem (i.e. still returns correct results)
+	int sensorValue = readRawMeasurement();
+	//Serial.println(sensorValue);
+	float voltage = sensorValue * (3.3/1023.0) * 1000.0; // mV
+	//Serial.println(voltage);
+
 	// convert voltage to dBm and return that value
 	_signalStrength = (voltage - _b)/_slope;
+
+
+	//Serial.print("signal strength: ");
+	Serial.println(_signalStrength);
+
 	return _signalStrength;
 }
 
@@ -73,6 +85,95 @@ void RFPowerMonitor::run() {
 	sendSignalStrength();
 
 	return;
+}
+
+int RFPowerMonitor::readRawMeasurement() {
+	//Serial.println("reading from serial3");
+	//Serial3.println(Serial3.readString());
+
+	// need the different parse states
+	const uint8_t PARSE_SYNC1 = 0;
+	const uint8_t PARSE_SYNC2 = 1;
+	const uint8_t PARSE_MSG_ID = 2;
+	const uint8_t PARSE_MSG = 3;
+
+	const unsigned long timeout = 200UL;  // timeout to wait
+	unsigned long startTime = millis();
+
+	uint8_t parseMode = PARSE_SYNC1;
+
+	uint8_t msgId = 0;
+	uint8_t msgIndex = 0;
+	uint8_t buf[4];
+	int value = 0;
+	uint8_t b;
+
+	// TODO: somehow limit this to only being available if the compiled target is a mega
+	while (millis() - startTime < timeout) {
+		if (Serial3.available() > 0) {
+			//Serial.println("data available from serial 3");
+		
+			// read in a byte
+			b = Serial3.read();
+			//Serial.write(b);
+			//Serial.print(b, HEX);
+			//Serial.print(" ");
+
+			// handle the read char based on the parse mode
+			switch (parseMode) {
+				case PARSE_SYNC1:
+					if (b == SYNC_1) {
+						//Serial.println("sync1 match");
+						parseMode = PARSE_SYNC2;
+					}
+					break;
+
+				case PARSE_SYNC2:
+					if (b == SYNC_2) {
+						//Serial.println("sync2 match");
+						parseMode = PARSE_MSG_ID;
+					} else {
+						//Serial.println("sync2 fail");
+						parseMode = PARSE_SYNC1;
+					}
+					break;
+
+				case PARSE_MSG_ID:
+					//Serial.println("parsing message");
+					msgId = (uint8_t) b;
+
+					msgIndex = 0;
+					parseMode = PARSE_MSG;
+					break;
+
+				case PARSE_MSG:
+					// add the byte to the buffer
+					buf[msgIndex] = b;
+
+					// increment index and see if completed reading
+					msgIndex++;
+					if (msgIndex >= 2) {
+						//Serial.println("have msg");
+
+						// convert the read bytes to the int value they are
+						value = (((int) buf[1]) << 8) | ((int) buf[0]);
+
+						// return the value
+						// for now treating this as basically calling this function
+						// instead of doing analog read
+						// TODO: find a more efficient way to do this!!!
+						return value;
+					}
+					break;
+					
+				default:
+					parseMode = PARSE_SYNC1;
+					break;
+			}
+		}
+	}
+	
+
 }
 
 
