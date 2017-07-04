@@ -96,6 +96,8 @@ int RFPowerMonitor::readRawMeasurement() {
 	const uint8_t PARSE_SYNC2 = 1;
 	const uint8_t PARSE_MSG_ID = 2;
 	const uint8_t PARSE_MSG = 3;
+	const uint8_t PARSE_CHK_A = 4;
+	const uint8_t PARSE_CHK_B = 5;
 
 	const unsigned long timeout = 200UL;  // timeout to wait
 	unsigned long startTime = millis();
@@ -107,6 +109,9 @@ int RFPowerMonitor::readRawMeasurement() {
 	uint8_t buf[4];
 	int value = 0;
 	uint8_t b;
+
+	uint8_t chkA = 0;
+	uint8_t chkB = 0;
 
 	// TODO: somehow limit this to only being available if the compiled target is a mega
 	while (millis() - startTime < timeout) {
@@ -125,6 +130,10 @@ int RFPowerMonitor::readRawMeasurement() {
 					if (b == SYNC_1) {
 						//Serial.println("sync1 match");
 						parseMode = PARSE_SYNC2;
+
+						// reset the checksum
+						chkA = 0;
+						chkB = 0;
 					}
 					break;
 
@@ -144,11 +153,15 @@ int RFPowerMonitor::readRawMeasurement() {
 
 					msgIndex = 0;
 					parseMode = PARSE_MSG;
+
 					break;
 
 				case PARSE_MSG:
 					// add the byte to the buffer
 					buf[msgIndex] = b;
+
+					chkA += b;
+					chkB += chkA;
 
 					// increment index and see if completed reading
 					msgIndex++;
@@ -162,8 +175,25 @@ int RFPowerMonitor::readRawMeasurement() {
 						// for now treating this as basically calling this function
 						// instead of doing analog read
 						// TODO: find a more efficient way to do this!!!
+						//return value;
+						parseMode = PARSE_CHK_A;
+					}
+					break;
+
+				case PARSE_CHK_A:
+					if (b == chkA) {
+						parseMode = PARSE_CHK_B;
+					} else {
+						parseMode = PARSE_SYNC1;
+					}
+					break;
+
+				case PARSE_CHK_B:
+					if (b == chkB) {
+						// all is good, so let's return the value that was received
 						return value;
 					}
+					parseMode = PARSE_SYNC1;
 					break;
 					
 				default:
