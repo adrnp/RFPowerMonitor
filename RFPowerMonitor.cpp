@@ -175,8 +175,8 @@ int RFPowerMonitor::readRawMeasurement() {
 						// for now treating this as basically calling this function
 						// instead of doing analog read
 						// TODO: find a more efficient way to do this!!!
-						//return value;
-						parseMode = PARSE_CHK_A;
+						return value;
+						//parseMode = PARSE_CHK_A;
 					}
 					break;
 
