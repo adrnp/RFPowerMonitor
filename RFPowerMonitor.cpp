@@ -65,8 +65,10 @@ float RFPowerMonitor::makeMeasurement() {
 	_signalStrength = (voltage - _b)/_slope;
 
 
-	//Serial.print("signal strength: ");
-	Serial.println(_signalStrength);
+	// DEBUG OUTPUT
+	Serial1.println("");
+	Serial1.print("signal strength: ");
+	Serial1.println(_signalStrength);
 
 	return _signalStrength;
 }
@@ -120,9 +122,10 @@ int RFPowerMonitor::readRawMeasurement() {
 		
 			// read in a byte
 			b = Serial3.read();
-			//Serial.write(b);
-			//Serial.print(b, HEX);
-			//Serial.print(" ");
+			
+			// DEBUG OUTPUT
+			Serial1.print(b, HEX);
+			Serial1.print(" ");
 
 			// handle the read char based on the parse mode
 			switch (parseMode) {
@@ -166,7 +169,12 @@ int RFPowerMonitor::readRawMeasurement() {
 					// increment index and see if completed reading
 					msgIndex++;
 					if (msgIndex >= 2) {
-						//Serial.println("have msg");
+						// DEBUG OUTPUT
+						Serial1.println("have msg");
+						Serial1.print("calculated checksum: ");
+						Serial1.print(chkA, HEX);
+						Serial1.print(" ");
+						Serial1.println(chkB, HEX);
 
 						// convert the read bytes to the int value they are
 						value = (((int) buf[1]) << 8) | ((int) buf[0]);
@@ -175,23 +183,32 @@ int RFPowerMonitor::readRawMeasurement() {
 						// for now treating this as basically calling this function
 						// instead of doing analog read
 						// TODO: find a more efficient way to do this!!!
-						return value;
-						//parseMode = PARSE_CHK_A;
+						//return value;
+						parseMode = PARSE_CHK_A;
 					}
 					break;
 
 				case PARSE_CHK_A:
 					if (b == chkA) {
+						// DEBUG OUTPUT
+						Serial1.println("chk A match");
 						parseMode = PARSE_CHK_B;
 					} else {
+						// DEBUG OUTPUT
+						Serial1.println("chk A FAILED!!!!");
 						parseMode = PARSE_SYNC1;
 					}
 					break;
 
 				case PARSE_CHK_B:
 					if (b == chkB) {
+						// DEBUG OUTPUT
+						Serial1.println("chk B match");
 						// all is good, so let's return the value that was received
 						return value;
+					} else {
+						// DEBUG OUTPUT
+						Serial1.println("chk B failed!!!!");
 					}
 					parseMode = PARSE_SYNC1;
 					break;
@@ -202,6 +219,10 @@ int RFPowerMonitor::readRawMeasurement() {
 			}
 		}
 	}
+
+	// if never got a measurement, return 0 (no measurement)
+	// TODO: should figure out a better thing to send to symbolize no measurement....
+	return 0;
 	
 
 }
