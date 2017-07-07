@@ -118,7 +118,9 @@ int RFPowerMonitor::readRawMeasurement() {
 	// TODO: somehow limit this to only being available if the compiled target is a mega
 	while (millis() - startTime < timeout) {
 		if (Serial3.available() > 0) {
-			//Serial.println("data available from serial 3");
+			
+			// DEBUG
+			//Serial1.println("data available from serial 3");
 		
 			// read in a byte
 			b = Serial3.read();
