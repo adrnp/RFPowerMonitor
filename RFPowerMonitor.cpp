@@ -108,7 +108,7 @@ int RFPowerMonitor::readRawMeasurement() {
 
 	uint8_t msgId = 0;
 	uint8_t msgIndex = 0;
-	uint8_t buf[4];
+	uint8_t buf[16];
 	int value = 0;
 	uint8_t b;
 
@@ -168,7 +168,7 @@ int RFPowerMonitor::readRawMeasurement() {
 
 					// increment index and see if completed reading
 					msgIndex++;
-					if (msgIndex >= 2) {
+					if (msgIndex >= 5) {
 						// DEBUG OUTPUT
 						Serial1.println("have msg");
 						Serial1.print("calculated checksum: ");
@@ -177,7 +177,7 @@ int RFPowerMonitor::readRawMeasurement() {
 						Serial1.println(chkB, HEX);
 
 						// convert the read bytes to the int value they are
-						value = (((int) buf[1]) << 8) | ((int) buf[0]);
+						value = (((int) buf[4]) << 8) | ((int) buf[3]);
 
 						// return the value
 						// for now treating this as basically calling this function
@@ -205,6 +205,8 @@ int RFPowerMonitor::readRawMeasurement() {
 						// DEBUG OUTPUT
 						Serial1.println("chk B match");
 						// all is good, so let's return the value that was received
+						// and send a phase message
+						sendPhase(buf[0], buf[1], buf[2]);
 						return value;
 					} else {
 						// DEBUG OUTPUT
@@ -229,6 +231,19 @@ int RFPowerMonitor::readRawMeasurement() {
 
 
 /* private functions */
+
+void RFPowerMonitor::sendPhase(uint8_t phase0, uint8_t phase1, uint8_t phase2) {
+	PhaseMessage msg;
+	msg.timestamp = _lastMeasurementTime;
+	msg.phase0 = phase0;
+	msg.phase1 = phase1;
+	msg.phase2 = phase2;
+
+	Serial.write(SYNC_1);
+	Serial.write(SYNC_2);
+	Serial.write((uint8_t) 3);  // the message ID for a phase message
+	Serial.write((uint8_t*) &msg, sizeof(msg));
+}
 
 void RFPowerMonitor::sendSignalStrength() {
 

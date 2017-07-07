@@ -89,6 +89,15 @@ private:
 		float signalStrength;
 	};
 
+	struct __attribute__((__packed__)) PhaseMessage {
+		unsigned long timestamp;
+		uint8_t phase0;
+		uint8_t phase1;
+		uint8_t phase2;
+	};
+
+	void sendPhase(uint8_t phase0, uint8_t phase1, uint8_t phase2);
+
 	void sendSignalStrength();
 	
 };
