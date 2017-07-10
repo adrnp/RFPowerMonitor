@@ -30,6 +30,11 @@ public:
 		F_3600_MHz
 	};
 
+	enum class Type : uint8_t {
+		SERIAL_DETECTOR = 0,
+		ANALOG_DETECTOR
+	};
+
 
 	/* constructor for reading the power monitor input over serial (connected to difference device) */
 	RFPowerMonitor(Frequency frequency);
@@ -39,6 +44,8 @@ public:
 
 
 	void setMeasurementRate(uint8_t rate) { _measurementRate = rate; };
+
+	void setType(Type type) { _type = type; };
 
 	void resetMeasurementCount() { _measurementCount = 0; };
 
@@ -81,6 +88,8 @@ private:
 	float _signalStrength;
 
 	int _measurementCount;
+
+	Type _type;
 
 
 	// stuff needed for the sending of the binary messages

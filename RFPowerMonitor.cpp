@@ -21,7 +21,8 @@ _pinRead(pinRead),
 _measurementRate(10),
 _lastMeasurementTime(0),
 _signalStrength(0),
-_measurementCount(0)
+_measurementCount(0),
+_type(Type::SERIAL_DETECTOR)
 {
 	// given the measurement rate (in Hz) calculate the timeout to wait between measurements
 	_timeout = 1.0/_measurementRate * 1000.0;
@@ -50,16 +51,28 @@ float RFPowerMonitor::makeMeasurement() {
 	_lastMeasurementTime = millis();
 	_measurementCount++;
 
+	int sensorValue = 0;
+	float voltage = 0;
+
 	// read in the value from the sensor
-	//int sensorValue = analogRead(_pinRead);
-	//float voltage = sensorValue * (5.0/1023.0) * 1000.0; // mV
-	
-	// NOTE: other board reads based on 3.3V not 5V
-	// TODO: make sure this isn't a problem (i.e. still returns correct results)
-	int sensorValue = readRawMeasurement();
-	//Serial.println(sensorValue);
-	float voltage = sensorValue * (3.3/1023.0) * 1000.0; // mV
-	//Serial.println(voltage);
+	// this depends on the type of sensor
+	switch (_type) {
+		case Type::ANALOG_DETECTOR:
+			// read in directly from the analog pin, note this has a 5V reference
+			sensorValue = analogRead(_pinRead);
+			voltage = sensorValue * (5.0/1023.0) * 1000.0; // mV
+			break;
+
+		case Type::SERIAL_DETECTOR:
+			// read in from serial3 port
+			// note this has a 3V reference
+			sensorValue = readRawMeasurement();
+			voltage = sensorValue * (3.3/1023.0) * 1000.0; // mV
+			break;
+
+		default:
+			break;
+	}
 
 	// convert voltage to dBm and return that value
 	_signalStrength = (voltage - _b)/_slope;
